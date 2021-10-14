@@ -183,3 +183,5 @@ from nested_multipart_parser.drf import DrfNestedParser
 class YourViewSet(viewsets.ViewSet):
 	parser_classes = (DrfNestedParser,)
 ```
+## for frontend javscript
+You can use this [multipart-object](https://www.npmjs.com/package/multipart-object) library
