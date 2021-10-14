@@ -279,3 +279,19 @@ class TestParser(TestCase):
             ]
         }
         self.assertDictEqual(parser.validate_data, expected)
+
+    def test_parser_rewrite_key_list(self):
+        data = {
+            'title': 'lalal',
+            'title[0]': 'lalal',
+        }
+        parser = NestedParser(data)
+        self.assertFalse(parser.is_valid())
+
+    def test_parser_rewrite_key_boject(self):
+        data = {
+            'title': 'lalal',
+            'title[object]': 'lalal',
+        }
+        parser = NestedParser(data)
+        self.assertFalse(parser.is_valid())

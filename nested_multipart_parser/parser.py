@@ -27,16 +27,20 @@ class NestedParser:
         return results
 
     def set_type(self, dtc, key, value, full_keys):
-        if key.isdigit():
+        if isinstance(dtc, list):
             key = int(key)
             if len(dtc) < key:
-                raise Exception(
+                raise ValueError(
                     f"key \"{full_keys}\" is upper than actual list")
             if len(dtc) == key:
                 dtc.append(value)
                 return key
-        elif key not in dtc:
-            dtc[key] = value
+        elif isinstance(dtc, dict):
+            if key not in dtc:
+                dtc[key] = value
+        else:
+            raise ValueError(
+                f"invalid rewrite key from \"{full_keys}\" to \"{dtc}\"")
         return key
 
     def construct(self, data):
