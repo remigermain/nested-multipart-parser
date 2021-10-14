@@ -1,12 +1,29 @@
+#!/usr/bin/env python3
 
 import setuptools
+import os
+import sys
+
+if sys.argv[-1] == 'publish':
+    if os.system("pip freeze | grep twine"):
+        print("twine not installed.\nUse `pip install twine`.\nExiting.")
+        sys.exit()
+    os.system('rm -rf dist nested_multipart_parser.egg-info')
+    os.system("python setup.py sdist")
+    if os.system("twine check dist/*"):
+        print("twine check failed. Packages might be outdated.")
+        print("Try using `pip install -U twine wheel`.\nExiting.")
+        sys.exit()
+    os.system("twine upload dist/*")
+    sys.exit()
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="nested-multipart-parser",
-    version="0.0.3",
+    version="0.1.0",
     author="Example Author",
     license='MIT',
     author_email='contact@germainremi.fr',
@@ -18,15 +35,23 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/remigermain/nested-multipart-parser/issues",
     },
     classifiers=[
-        'Operating System :: OS Independent',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 3',
+        'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.0',
+        'Framework :: Django :: 3.1',
+        'Framework :: Django :: 3.2',
         'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3 :: Only',
         'Topic :: Internet :: WWW/HTTP',
-        'License :: OSI Approved :: MIT License'
     ],
     packages=["nested_multipart_parser"],
     python_requires=">=3.6",
