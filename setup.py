@@ -28,7 +28,6 @@ setuptools.setup(
         'Topic :: Internet :: WWW/HTTP',
         'License :: OSI Approved :: MIT License'
     ],
-    package_dir={"": "src"},
     packages=["nested_multipart_parser"],
     python_requires=">=3.6",
 )
