@@ -1,5 +1,8 @@
 # Nested-multipart-parser
 
+[![build](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml/badge.svg)](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml)
+[![pypi](https://img.shields.io/pypi/v/nested-multipart-parser)](https://pypi.org/project/nested-multipart-parser/)
+
 Parser for nested data in multipart form, you can use it anyways, and you have a django rest framework integration
 
 # Installation
@@ -8,7 +11,32 @@ Parser for nested data in multipart form, you can use it anyways, and you have a
 pip install nested-multipart-parser
 ```
 
-# Usage
+# How to use it
+
+## for every framwork
+
+```python
+from nested_multipart_parser import NestedParser
+
+def my_view():
+	parser = NestedParser(data)
+	if parser.is_valid():
+		validate_data = parser.validate_data
+		...
+	else:
+		print(parser.errors)
+
+```
+
+## for django rest framwork
+
+```python
+from nested_multipart_parser.drf import DrfNestedParser
+...
+
+class YourViewSet(viewsets.ViewSet):
+	parser_classes = (DrfNestedParser,)
+```
 
 ## What is doing
 
@@ -22,7 +50,7 @@ exemple:
 	'title': 'title',
 	'date': "time",
 	'simple_object[my_key]': 'title'
-	'simple_object[my_list][0]': True
+	'simple_object[my_list][0]': True,
 	'langs[0][id]': 666,
 	'langs[0][title]': 'title',
 	'langs[0][description]': 'description',
@@ -157,31 +185,6 @@ for this working perfectly you need to follow this rules:
 	}
 ```
 
-# How to use it
 
-## for every framwork
-
-```python
-from nested_multipart_parser import NestedParser
-
-def my_view():
-	parser = NestedParser(data)
-	if parser.is_valid():
-		validate_data = parser.validate_data
-		...
-	else:
-		print(parser.errors)
-
-```
-
-## for django rest framwork
-
-```python
-from nested_multipart_parser.drf import DrfNestedParser
-...
-
-class YourViewSet(viewsets.ViewSet):
-	parser_classes = (DrfNestedParser,)
-```
-## for frontend javscript
-You can use this [multipart-object](https://www.npmjs.com/package/multipart-object) library
+## Javscript
+You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formated for this library
