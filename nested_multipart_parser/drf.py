@@ -2,9 +2,13 @@ from .parser import NestedParser as NestPars
 from rest_framework.parsers import MultiPartParser
 from django.http.multipartparser import MultiPartParserError
 from django.http import QueryDict
+from django.conf import settings
 
 
 class NestedParser(NestPars):
+
+    def __init__(self, data):
+        super().__init__(data, getattr(settings, "DRF_NESTED_MULTIPART_PARSER", {}))
 
     @property
     def validate_data(self):

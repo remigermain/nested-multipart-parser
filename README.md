@@ -93,10 +93,10 @@ exemple:
 for this working perfectly you need to follow this rules:
 
 - a first key need to be set ex: 'title[0]' or 'title', in both the first key is 'title'
-- each sub key need to enclose by brackets "[--your-key--]"
+- each sub key need to seperate by brackets "[--your-key--]" or dot "." (depends of your options)
 - if sub key are a full number, is converted to list
 - if sub key is Not a number is converted to dictionary
-- the key can't be rewite
+- by default,the duplicate keys can't be set (see options to override that)
   ex:
 
 ```python
@@ -117,7 +117,7 @@ for this working perfectly you need to follow this rules:
 	# ERROR , you set a number is upper thans actual list
 
 
-	# wrong format
+	# wrong format if separator is brackets (see options)
 	data = {
 		'title[0]]]': 'my-value',
 		'title[0': 'my-value',
@@ -162,7 +162,12 @@ for this working perfectly you need to follow this rules:
 	data = {
 		'the[0][chained][key][0][are][awesome][0][0]': 'im here !!'
 	}
-	# output
+	# with "dot" separator in options is ;look like that
+	data = {
+		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
+	}
+
+	# the output
 	output: {
 		'the': [
 			{
@@ -185,6 +190,88 @@ for this working perfectly you need to follow this rules:
 	}
 ```
 
+# How to use it
 
-## Javscript
+## for every framwork
+
+```python
+from nested_multipart_parser import NestedParser
+
+options = {
+	"separator": "bracket"
+}
+
+def my_view():
+	# options is optional
+	parser = NestedParser(data, options)
+	if parser.is_valid():
+		validate_data = parser.validate_data
+		...
+	else:
+		print(parser.errors)
+
+```
+
+## for django rest framwork
+
+```python
+from nested_multipart_parser.drf import DrfNestedParser
+...
+
+class YourViewSet(viewsets.ViewSet):
+	parser_classes = (DrfNestedParser,)
+```
+
+## options
+
+```python
+{
+	# the separator
+	# with bracket:  article[title][authors][0]: "jhon doe"
+	# with dot:      article.title.authors.0: "jhon doe"
+	'separator': 'bracket' or 'dot', # default is bracket
+
+	# raise a expections when you have duplicate keys
+	# ex :
+	# {
+	#	"article": 42,
+	#	"article[title]": 42,
+	# }
+	'raise_duplicate': True,
+
+	# overide the duplicate keys, you need to set "raise_duplicate" to False
+	# ex :
+	# {
+	#	"article": 42,
+	#	"article[title]": 42,
+	# }
+	# the out is
+	# ex :
+	# {
+	#	"article"{
+	# 		"title": 42,
+	#	}
+	# }
+	'assign_duplicate': False
+}
+```
+
+## options with django rest framwork
+
+In your settings.py, add "DRF_NESTED_MULTIPART_PARSER"
+
+```python
+#settings.py
+...
+
+DRF_NESTED_MULTIPART_PARSER = {
+	"separator": "bracket",
+	"raise_duplicate": True,
+	"assign_duplicate": False
+
+}
+```
+
+## for frontend javscript
+
 You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formated for this library

@@ -23,7 +23,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="nested-multipart-parser",
-    version="0.1.0",
+    version="0.2.0",
     author="Example Author",
     license='MIT',
     author_email='contact@germainremi.fr',

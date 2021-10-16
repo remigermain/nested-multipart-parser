@@ -2,6 +2,13 @@ import unittest
 from django.http import QueryDict
 
 
+def toQueryDict(data):
+    q = QueryDict(mutable=True)
+    q.update(data)
+    q._mutable = False
+    return q
+
+
 class TestDrfParser(unittest.TestCase):
 
     @classmethod
@@ -24,8 +31,7 @@ class TestDrfParser(unittest.TestCase):
             }
         )
         self.assertTrue(parser.is_valid())
-        q = QueryDict(mutable=True)
-        q.update({
+        q = toQueryDict({
             "dtc": {
                 "key": "value",
                 "vla": "value2",
@@ -40,6 +46,34 @@ class TestDrfParser(unittest.TestCase):
             ],
             "string": "value",
         })
-        q.mutable = False
         self.assertEqual(parser.validate_data, q)
         self.assertFalse(parser.validate_data.mutable)
+
+    def test_settings(self):
+        from nested_multipart_parser.drf import NestedParser
+
+        data = {
+            "article.title": "youpi"
+        }
+        p = NestedParser(data)
+        self.assertTrue(p.is_valid())
+        expected = toQueryDict({
+            "article.title": "youpi"
+        })
+        self.assertEqual(p.validate_data, expected)
+
+        # set settings
+        from django.conf import settings
+        options = {
+            "separator": "dot"
+        }
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER', options)
+
+        p = NestedParser(data)
+        self.assertTrue(p.is_valid())
+        expected = toQueryDict({
+            "article": {
+                "title": "youpi"
+            }
+        })
+        self.assertEqual(p.validate_data, expected)
