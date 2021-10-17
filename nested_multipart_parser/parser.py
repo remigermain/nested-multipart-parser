@@ -43,8 +43,8 @@ class NestedParser:
             length = 1
             splitter = k.split(".")
         else:
-            splitter = self._reg.split(k)
             length = 2
+            splitter = self._reg.split(k)
 
         check = -length
 
@@ -67,7 +67,7 @@ class NestedParser:
             if len(dtc) == key:
                 dtc.append(value)
         elif isinstance(dtc, dict):
-            if key not in dtc or self._options["assign_duplicate"] and last:
+            if key not in dtc or last and self._options["assign_duplicate"]:
                 dtc[key] = value
         else:
             if self._options["raise_duplicate"]:
@@ -82,32 +82,38 @@ class NestedParser:
     def get_next_type(self, keys):
         return [] if keys.isdigit() else {}
 
+    def convert_value(self, data, key):
+        return data[key]
+
     def construct(self, data):
         dictionary = {}
+        prev = {}
 
         for key in data:
             keys = self.split_key(key)
             tmp = dictionary
-            prev = {
-                'key': keys[0],
-                'dtc': tmp,
-                'type': None
-            }
+
+            # need it for duplicate assignement
+            prev['key'] = keys[0]
+            prev['dtc'] = tmp
+            prev['type'] = None
 
             # optimize with while loop instend of for in with zip function
             i = 0
             lenght = len(keys) - 1
             while i < lenght:
                 set_type = self.get_next_type(keys[i+1])
-                index = self.set_type(
-                    tmp, keys[i], set_type, key, prev=prev)
+                index = self.set_type(tmp, keys[i], set_type, key, prev)
+
                 prev['dtc'] = tmp
                 prev['key'] = index
                 prev['type'] = set_type
+
                 tmp = tmp[index]
                 i += 1
 
-            self.set_type(tmp, keys[-1], data[key], key, prev=prev, last=True)
+            value = self.convert_value(data, key)
+            self.set_type(tmp, keys[-1], value, key, prev, True)
         return dictionary
 
     def is_valid(self):

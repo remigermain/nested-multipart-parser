@@ -3,7 +3,7 @@
 [![build](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml/badge.svg)](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml)
 [![pypi](https://img.shields.io/pypi/v/nested-multipart-parser)](https://pypi.org/project/nested-multipart-parser/)
 
-Parser for nested data in multipart form, you can use it anyways, and you have a django rest framework integration
+Parser for nested data for '*multipart/form*', you can use it any python project and you have a django rest framework integration.
 
 # Installation
 
@@ -13,13 +13,18 @@ pip install nested-multipart-parser
 
 # How to use it
 
-## for every framwork
+### Any python project
 
 ```python
 from nested_multipart_parser import NestedParser
 
+options = {
+	"separator": "bracket"
+}
+
 def my_view():
-	parser = NestedParser(data)
+	# options is optional
+	parser = NestedParser(data, options)
 	if parser.is_valid():
 		validate_data = parser.validate_data
 		...
@@ -28,7 +33,7 @@ def my_view():
 
 ```
 
-## for django rest framwork
+### Django rest framwork
 
 ```python
 from nested_multipart_parser.drf import DrfNestedParser
@@ -38,9 +43,10 @@ class YourViewSet(viewsets.ViewSet):
 	parser_classes = (DrfNestedParser,)
 ```
 
+
 ## What is doing
 
-the parser take the request data and transform to dictionary
+The parser take the request data and transform to dictionary
 
 exemple:
 
@@ -90,18 +96,18 @@ exemple:
 
 ## How is work
 
-for this working perfectly you need to follow this rules:
+For this working perfectly you need to follow this rules:
 
-- a first key need to be set ex: 'title[0]' or 'title', in both the first key is 'title'
-- each sub key need to seperate by brackets "[--your-key--]" or dot "." (depends of your options)
-- if sub key are a full number, is converted to list
-- if sub key is Not a number is converted to dictionary
+- a first key need to be set ex: `title[0]` or `title`, in both the first key is `title`
+- each sub key need to be seperate by brackets `[ ]` or dot `.` (depends of your options)
+- if sub key are a full number, is converted to list *ex:* `[0]` or `[42]`
+- if sub key is Not a number is converted to dictionary *ex:* `[username]` or `[article]`
 - by default,the duplicate keys can't be set (see options to override that)
   ex:
 
 ```python
 	data = {
-		'title[0]': 'my-value'
+		'title[0]': 'my-value'``
 	}
 	# output
 	output = {
@@ -162,7 +168,7 @@ for this working perfectly you need to follow this rules:
 	data = {
 		'the[0][chained][key][0][are][awesome][0][0]': 'im here !!'
 	}
-	# with "dot" separator in options is ;look like that
+	# with "dot" separator in options is look like that
 	data = {
 		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
 	}
@@ -190,39 +196,7 @@ for this working perfectly you need to follow this rules:
 	}
 ```
 
-# How to use it
-
-## for every framwork
-
-```python
-from nested_multipart_parser import NestedParser
-
-options = {
-	"separator": "bracket"
-}
-
-def my_view():
-	# options is optional
-	parser = NestedParser(data, options)
-	if parser.is_valid():
-		validate_data = parser.validate_data
-		...
-	else:
-		print(parser.errors)
-
-```
-
-## for django rest framwork
-
-```python
-from nested_multipart_parser.drf import DrfNestedParser
-...
-
-class YourViewSet(viewsets.ViewSet):
-	parser_classes = (DrfNestedParser,)
-```
-
-## options
+## Options
 
 ```python
 {
@@ -231,13 +205,14 @@ class YourViewSet(viewsets.ViewSet):
 	# with dot:      article.title.authors.0: "jhon doe"
 	'separator': 'bracket' or 'dot', # default is bracket
 
+
 	# raise a expections when you have duplicate keys
 	# ex :
 	# {
 	#	"article": 42,
 	#	"article[title]": 42,
 	# }
-	'raise_duplicate': True,
+	'raise_duplicate': True, # default is True
 
 	# overide the duplicate keys, you need to set "raise_duplicate" to False
 	# ex :
@@ -252,16 +227,16 @@ class YourViewSet(viewsets.ViewSet):
 	# 		"title": 42,
 	#	}
 	# }
-	'assign_duplicate': False
+	'assign_duplicate': False # default is False
 }
 ```
 
-## options with django rest framwork
+## Options with django rest framwork
 
 In your settings.py, add "DRF_NESTED_MULTIPART_PARSER"
 
 ```python
-#settings.py
+# settings.py
 ...
 
 DRF_NESTED_MULTIPART_PARSER = {
@@ -272,6 +247,6 @@ DRF_NESTED_MULTIPART_PARSER = {
 }
 ```
 
-## for frontend javscript
+## Javscript integration
 
 You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formated for this library

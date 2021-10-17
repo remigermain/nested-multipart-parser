@@ -1,6 +1,6 @@
 from .parser import NestedParser as NestPars
-from rest_framework.parsers import MultiPartParser
-from django.http.multipartparser import MultiPartParserError
+from rest_framework.parsers import MultiPartParser, DataAndFiles
+from rest_framework.exceptions import ParseError
 from django.http import QueryDict
 from django.conf import settings
 
@@ -9,6 +9,13 @@ class NestedParser(NestPars):
 
     def __init__(self, data):
         super().__init__(data, getattr(settings, "DRF_NESTED_MULTIPART_PARSER", {}))
+
+    def convert_value(self, data, key):
+        # all value in querydict as set in list
+        value = data[key]
+        if isinstance(value, list):
+            return value[0]
+        return value
 
     @property
     def validate_data(self):
@@ -21,14 +28,9 @@ class NestedParser(NestPars):
 class DrfNestedParser(MultiPartParser):
 
     def parse(self, stream, media_type=None, parser_context=None):
-        parsed = super().parse(stream, media_type, parser_context)
+        clsDataAndFile = super().parse(stream, media_type, parser_context)
 
-        copy = parsed.data.copy()
-        if parsed.files:
-            copy.update(parsed.files)
-        parser = NestedParser(copy)
+        parser = NestedParser(clsDataAndFile.data.dict())
         if parser.is_valid():
-            return parser.validate_data
-        if parser.errors:
-            raise MultiPartParserError(parser.errors)
-        return parsed
+            return DataAndFiles(parser.validate_data, clsDataAndFile.files)
+        raise ParseError(parser.errors)
