@@ -3,6 +3,10 @@
 import setuptools
 import os
 import sys
+import subprocess
+
+
+version=subprocess.check_output("git tag -l | cat | rev", shell=True).decode("utf-8").split("\n")[0]
 
 if sys.argv[-1] == 'publish':
     if os.system("pip freeze | grep twine"):
@@ -23,7 +27,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="nested-multipart-parser",
-    version="0.2.0",
+    version=version,
     author="Example Author",
     license='MIT',
     author_email='contact@germainremi.fr',
