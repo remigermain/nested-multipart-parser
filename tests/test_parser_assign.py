@@ -108,20 +108,19 @@ class TestSettingsSeparator(TestCase):
         }
         self.assertEqual(p.validate_data, expected)
 
-
-def test_assign_nested_duplicate_number_after_dict2(self):
-    data = {
-        "title[0][sub][title]": 101,
-        "title[0][sub]": 42,
-    }
-    p = NestedParser(
-        data, {"raise_duplicate": False, "assign_duplicate": True})
-    self.assertTrue(p.is_valid())
-    expected = {
-        "title": [
-            {
-                "sub": 42
-            }
-        ]
-    }
-    self.assertEqual(p.validate_data, expected)
+    def test_assign_nested_duplicate_number_after_dict2(self):
+        data = {
+            "title[0][sub][title]": 101,
+            "title[0][sub]": 42,
+        }
+        p = NestedParser(
+            data, {"raise_duplicate": False, "assign_duplicate": True})
+        self.assertTrue(p.is_valid())
+        expected = {
+            "title": [
+                {
+                    "sub": 42
+                }
+            ]
+        }
+        self.assertEqual(p.validate_data, expected)
