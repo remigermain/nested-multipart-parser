@@ -29,7 +29,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setuptools.setup(
     name="nested-multipart-parser",
     version=version,
-    author="Example Author",
+    author="rgermain",
     license='MIT',
     author_email='contact@germainremi.fr',
     description="A parser for nested data in multipart form",

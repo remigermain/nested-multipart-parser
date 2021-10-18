@@ -102,6 +102,7 @@ For this working perfectly you need to follow this rules:
 - each sub key need to be seperate by brackets `[ ]` or dot `.` (depends of your options)
 - if sub key are a full number, is converted to list *ex:* `[0]` or `[42]`
 - if sub key is Not a number is converted to dictionary *ex:* `[username]` or `[article]`
+- no space between separator
 - by default,the duplicate keys can't be set (see options to override that)
   ex:
 
