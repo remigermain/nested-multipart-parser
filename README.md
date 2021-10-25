@@ -13,8 +13,6 @@ pip install nested-multipart-parser
 
 # How to use it
 
-### Any python project
-
 ```python
 from nested_multipart_parser import NestedParser
 
@@ -233,10 +231,8 @@ For this working perfectly you need to follow this rules:
 ```
 
 ## Options with django rest framwork
-
-In your settings.py, add "DRF_NESTED_MULTIPART_PARSER"
-
 ```python
+
 # settings.py
 ...
 
@@ -251,3 +247,7 @@ DRF_NESTED_MULTIPART_PARSER = {
 ## Javscript integration
 
 You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formated for this library
+
+## License
+
+[MIT](https://github.com/remigermain/multipart-object/blob/main/LICENSE)
