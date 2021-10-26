@@ -140,6 +140,10 @@ Attributes where sub keys are other than full numbers are converted into Python 
 	data = {
 		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
 	}
+	# with "mixed" separator option:
+	data = {
+		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
+	}
 ```
 
 
@@ -149,6 +153,8 @@ For this to work perfectly, you must follow the following rules:
 - A first key always need to be set. ex: `title[0]` or `title`. In both cases the first key is `title`
 
 - Each sub key need to be separate by brackets `[ ]` or dot `.` (depends of your options)
+
+- For `mixed` options, brackets `[]` is for list, and dot `.` is for object
 
 - Don't put spaces between separators.
 
@@ -163,7 +169,7 @@ For this to work perfectly, you must follow the following rules:
 	# Separators:
 	# with bracket:  article[title][authors][0]: "jhon doe"
 	# with dot:      article.title.authors.0: "jhon doe"
-	'separator': 'bracket' or 'dot', # default is bracket
+	'separator': 'bracket' or 'dot' or 'mixed', # default is bracket
 
 
 	# raise a expections when you have duplicate keys

@@ -19,32 +19,85 @@ class NestedParser:
         options = {**DEFAULT_OPTIONS, **options}
         self._options = options
 
-        assert self._options.get("separator", "dot") in ["dot", "bracket"]
+        assert self._options.get("separator", "dot") in [
+            "dot", "bracket", "mixed"]
         assert isinstance(self._options.get("raise_duplicate", False), bool)
         assert isinstance(self._options.get("assign_duplicate", False), bool)
 
-        self._is_dot = self._options["separator"] == "dot"
-        if not self.is_dot:
+        self.__is_dot = False
+        self.__is_mixed = False
+        self.__is_bracket = False
+        if self._options["separator"] == "dot":
+            self.__is_dot = True
+        elif self._options["separator"] == "mixed":
+            self.__is_mixed = True
+        else:
+            self.__is_bracket = True
             self._reg = re.compile(r"\[|\]")
 
-    @property
-    def is_dot(self):
-        return self._is_dot
+    def mixed_split(self, key):
+        def span(key, i):
+            old = i
+            while i != len(key):
+                if key[i] in ".[]":
+                    break
+                i += 1
+            if old == i:
+                raise ValueError(
+                    f"invalid format key '{full_keys}', empty key value at position {i + pos}")
+            return i
+
+        full_keys = key
+        idx = span(key, 0)
+        pos = idx
+        keys = [key[:idx]]
+        key = key[idx:]
+
+        i = 0
+        while i < len(key):
+            if key[i] == '.':
+                i += 1
+                idx = span(key, i)
+                keys.append(key[i: idx])
+                i = idx
+            elif key[i] == '[':
+                i += 1
+                idx = span(key, i)
+                if key[idx] != ']':
+                    raise ValueError(
+                        f"invalid format key '{full_keys}', not end with bracket at position {i + pos}")
+                sub = key[i: idx]
+                if not sub.isdigit():
+                    raise ValueError(
+                        f"invalid format key '{full_keys}', list key is not a valid number at position {i + pos}")
+                keys.append(int(key[i: idx]))
+                i = idx + 1
+            elif key[i] == ']':
+                raise ValueError(
+                    f"invalid format key '{full_keys}', not start with bracket at position {i + pos}")
+            else:
+                raise ValueError(
+                    f"invalid format key '{full_keys}', invalid char at position {i + pos}")
+        return keys
 
     def split_key(self, key):
         # remove space
         k = key.replace(" ", "")
+        if len(k) != len(key):
+            raise Exception(f"invalid format from key {key}, no space allowed")
 
         # remove empty string and count key length for check is a good format
         # reduce + filter are a hight cost so do manualy with for loop
 
         # optimize by split with string func
-        if self.is_dot:
+        if self.__is_mixed:
+            return self.mixed_split(key)
+        if self.__is_dot:
             length = 1
-            splitter = k.split(".")
+            splitter = key.split(".")
         else:
             length = 2
-            splitter = self._reg.split(k)
+            splitter = self._reg.split(key)
 
         check = -length
 
@@ -54,7 +107,7 @@ class NestedParser:
                 results.append(select)
                 check += len(select) + length
 
-        if len(k) != check:
+        if len(key) != check:
             raise Exception(f"invalid format from key {key}")
         return results
 
@@ -79,8 +132,10 @@ class NestedParser:
                 return self.set_type(dtc[prev['key']], key, value, full_keys, prev, last)
         return key
 
-    def get_next_type(self, keys):
-        return [] if keys.isdigit() else {}
+    def get_next_type(self, key):
+        if self.__is_mixed:
+            return [] if isinstance(key, int) else {}
+        return [] if key.isdigit() else {}
 
     def convert_value(self, data, key):
         return data[key]
