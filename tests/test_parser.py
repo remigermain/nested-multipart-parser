@@ -100,22 +100,6 @@ class TestParser(TestCase):
         }
         self.assertEqual(expected, parser.validate_data)
 
-    def test_parser_object_reasing(self):
-        data = {
-            'title[id][length]': 'lalal',
-            'title[id][  length  ]': 'lalal',
-        }
-        parser = NestedParser(data)
-        self.assertTrue(parser.is_valid())
-        expected = {
-            'title': {
-                'id': {
-                    'length': 'lalal'
-                }
-            }
-        }
-        self.assertEqual(expected, parser.validate_data)
-
     def test_parser_object_reasing2(self):
         data = {
             'title[id][length]': 'lalal',
@@ -170,16 +154,6 @@ class TestParser(TestCase):
         parser = NestedParser(data)
         self.assertFalse(parser.is_valid())
 
-    def test_parser_classic_double_assign(self):
-        data = {
-            'title   ': 'lalal',
-            'title': 'dddddddddddddd'
-        }
-        parser = NestedParser(data)
-        self.assertTrue(parser.is_valid())
-        expected = {'title': 'lalal'}
-        self.assertEqual(expected, parser.validate_data)
-
     def test_parser_list(self):
         data = {
             'title': 'lalal',
@@ -225,24 +199,6 @@ class TestParser(TestCase):
             }
         }
         self.assertTrue(parser.is_valid())
-        self.assertEqual(expected, parser.validate_data)
-
-    def test_parser_list_double_assign(self):
-        data = {
-            'title': 'lalal',
-            'list[0]': 'icicici',
-            'list[0 ]': 'new',
-            'list[1]': 'neeew',
-        }
-        parser = NestedParser(data)
-        self.assertTrue(parser.is_valid())
-        expected = {
-            'title': 'lalal',
-            'list': [
-                'icicici',
-                'neeew'
-            ]
-        }
         self.assertEqual(expected, parser.validate_data)
 
     def test_real(self):

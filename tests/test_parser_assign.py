@@ -4,31 +4,6 @@ from unittest import TestCase
 
 class TestSettingsSeparator(TestCase):
 
-    def test_raise_duplicate(self):
-        data = {
-            "title": 42,
-            "title  ": 101
-        }
-        p = NestedParser(data, {"raise_duplicate": False})
-        self.assertTrue(p.is_valid())
-        expected = {
-            "title": 42
-        }
-        self.assertEqual(p.validate_data, expected)
-
-    def test_assign_duplicate(self):
-        data = {
-            "title": 42,
-            "title  ": 101
-        }
-        p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
-        self.assertTrue(p.is_valid())
-        expected = {
-            "title": 101
-        }
-        self.assertEqual(p.validate_data, expected)
-
     def test_assign_duplicate_list(self):
         data = {
             "title": 42,

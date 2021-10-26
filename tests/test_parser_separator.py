@@ -84,22 +84,6 @@ class TestSettingsSeparator(TestCase):
         }
         self.assertEqual(expected, parser.validate_data)
 
-    def test_parser_object_reasing(self):
-        data = {
-            'title.id.length': 'lalal',
-            'title.id.  length  ': 'lalal',
-        }
-        parser = NestedParser(data, {"separator": "dot"})
-        self.assertTrue(parser.is_valid())
-        expected = {
-            'title': {
-                'id': {
-                    'length': 'lalal'
-                }
-            }
-        }
-        self.assertEqual(expected, parser.validate_data)
-
     def test_parser_object_reasing2(self):
         data = {
             'title.id.length': 'lalal',
@@ -154,16 +138,6 @@ class TestSettingsSeparator(TestCase):
         parser = NestedParser(data, {"separator": "dot"})
         self.assertFalse(parser.is_valid())
 
-    def test_parser_classic_double_assign(self):
-        data = {
-            'title   ': 'lalal',
-            'title': 'dddddddddddddd'
-        }
-        parser = NestedParser(data, {"separator": "dot"})
-        self.assertTrue(parser.is_valid())
-        expected = {'title': 'lalal'}
-        self.assertEqual(expected, parser.validate_data)
-
     def test_parser_list(self):
         data = {
             'title': 'lalal',
@@ -211,23 +185,12 @@ class TestSettingsSeparator(TestCase):
         self.assertTrue(parser.is_valid())
         self.assertEqual(expected, parser.validate_data)
 
-    def test_parser_list_double_assign(self):
+    def test_parser_space_key(self):
         data = {
-            'title': 'lalal',
-            'list.0': 'icicici',
-            'list.0 ': 'new',
-            'list.1': 'neeew',
+            'title ': 'lalal',
         }
         parser = NestedParser(data, {"separator": "dot"})
-        self.assertTrue(parser.is_valid())
-        expected = {
-            'title': 'lalal',
-            'list': [
-                'icicici',
-                'neeew'
-            ]
-        }
-        self.assertEqual(expected, parser.validate_data)
+        self.assertFalse(parser.is_valid())
 
     def test_real(self):
         data = {

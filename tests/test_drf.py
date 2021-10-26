@@ -85,11 +85,13 @@ class TestDrfParser(unittest.TestCase):
         factory = APIRequestFactory()
         content = encode_multipart('BoUnDaRyStRiNg', data)
         content_type = 'multipart/form-data; boundary=BoUnDaRyStRiNg'
-        request = factory.put('/notes/547/', content, content_type=content_type)
+        request = factory.put('/notes/547/', content,
+                              content_type=content_type)
         return Request(request, parsers=[DrfNestedParser()])
 
     def test_views(self):
-        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER', {"separator": "bracket"})
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "bracket"})
         data = {
             "dtc[key]": 'value',
             "dtc[vla]": "value2",
@@ -149,7 +151,8 @@ class TestDrfParser(unittest.TestCase):
         self.assertFalse(results.data.mutable)
 
     def test_views_invalid(self):
-        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER', {"separator": "bracket"})
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "bracket"})
         data = {
             "dtc[key": 'value',
             "dtc[hh][oo]": "sub",
@@ -161,7 +164,8 @@ class TestDrfParser(unittest.TestCase):
             results.data
 
     def test_views_invalid_options(self):
-        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER', {"separator": "invalid"})
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "invalid"})
         data = {
             "dtc[key]": 'value',
             "dtc[hh][oo]": "sub",
@@ -171,3 +175,38 @@ class TestDrfParser(unittest.TestCase):
 
         with self.assertRaises(AssertionError):
             results.data
+
+    def test_views_options_mixed_invalid(self):
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "mixed"})
+        data = {
+            "dtc[key]": 'value',
+            "dtc[hh][oo]": "sub",
+            "dtc[hh][aa]": "sub2"
+        }
+        results = self.parser_boundary(data)
+
+        with self.assertRaises(ParseError):
+            results.data
+
+    def test_views_options_mixed_valid(self):
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "mixed"})
+        data = {
+            "dtc.key": 'value',
+            "dtc.hh.oo": "sub",
+            "dtc.hh.aa": "sub2"
+        }
+        results = self.parser_boundary(data)
+
+        expected = {
+            "dtc": {
+                "key": "value",
+                "hh": {
+                    "aa": "sub2",
+                    "oo": "sub"
+                }
+            }
+        }
+
+        self.assertEqual(results.data, toQueryDict(expected))
