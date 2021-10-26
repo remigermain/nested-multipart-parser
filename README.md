@@ -3,15 +3,15 @@
 [![build](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml/badge.svg)](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml)
 [![pypi](https://img.shields.io/pypi/v/nested-multipart-parser)](https://pypi.org/project/nested-multipart-parser/)
 
-Parser for nested data for '*multipart/form*', you can use it any python project and you have a django rest framework integration.
+Parser for nested data for '*multipart/form*', you can use it in any python project, or use the Django Rest Framework integration.
 
-# Installation
+# Installation:
 
 ```bash
 pip install nested-multipart-parser
 ```
 
-# How to use it
+# Usage:
 
 ```python
 from nested_multipart_parser import NestedParser
@@ -21,7 +21,7 @@ options = {
 }
 
 def my_view():
-	# options is optional
+	# `options` is optional
 	parser = NestedParser(data, options)
 	if parser.is_valid():
 		validate_data = parser.validate_data
@@ -31,7 +31,7 @@ def my_view():
 
 ```
 
-### Django rest framwork
+### Django Rest Framework
 
 ```python
 from nested_multipart_parser.drf import DrfNestedParser
@@ -42,14 +42,14 @@ class YourViewSet(viewsets.ViewSet):
 ```
 
 
-## What is doing
+## What it does:
 
-The parser take the request data and transform to dictionary
+The parser take the request data and transform it to a Python dictionary:
 
-exemple:
+example:
 
 ```python
-# input
+# input:
 {
 	'title': 'title',
 	'date': "time",
@@ -65,7 +65,7 @@ exemple:
 	'langs[1][language]': "language1"
 }
 
-# results are:
+# result:
  {
 	'title': 'title',
 	'date': "time",
@@ -92,57 +92,15 @@ exemple:
 }
 ```
 
-## How is work
+## How it works:
 
-For this working perfectly you need to follow this rules:
-
-- a first key need to be set ex: `title[0]` or `title`, in both the first key is `title`
-- each sub key need to be seperate by brackets `[ ]` or dot `.` (depends of your options)
-- if sub key are a full number, is converted to list *ex:* `[0]` or `[42]`
-- if sub key is Not a number is converted to dictionary *ex:* `[username]` or `[article]`
-- no space between separator
-- by default,the duplicate keys can't be set (see options to override that)
-  ex:
+Attributes where sub keys are full numbers only are automatically converted into lists:
 
 ```python
-	data = {
-		'title[0]': 'my-value'``
-	}
-	# output
-	output = {
-		'title': [
-			'my-value'
-		]
-	}
-
-	# invalid key
-	data = {
-		'title[688]': 'my-value'
-	}
-	# ERROR , you set a number is upper thans actual list
-
-
-	# wrong format if separator is brackets (see options)
-	data = {
-		'title[0]]]': 'my-value',
-		'title[0': 'my-value',
-		'title[': 'my-value',
-		'title[]': 'my-value',
-		'[]': 'my-value',
-	}
-
-	data = {
-		'title': 42,
-		'title[object]': 42
-	}
-	# Error , title as alerady set by primitive value (int, boolean or string)
-
-	# many element in list
 	data = {
 		'title[0]': 'my-value',
 		'title[1]': 'my-second-value'
 	}
-	# output
 	output = {
 		'title': [
 			'my-value',
@@ -150,56 +108,59 @@ For this working perfectly you need to follow this rules:
 		]
 	}
 
-	# converted to object
+	# Be aware of the fact that you have to respect the order of the indices for arrays, thus 
+    	'title[2]': 'my-value' # Invalid (you have to set title[0] and title[1] before)
+
+    # Also, you can't create an array on a key already set as a prinitive value (int, boolean or string):
+		'title': 42,
+		'title[object]': 42 # Invalid
+```
+
+
+
+Attributes where sub keys are other than full numbers are converted into Python dictionary:
+
+```python
 	data = {
 		'title[key0]': 'my-value',
 		'title[key7]': 'my-second-value'
 	}
-	# output
 	output = {
 		'title': {
 			'key0': 'my-value',
 			'key7': 'my-second-value'
 		}
 	}
-
-	# you have no limit for chained key
+    
+    # You have no limit for chained key:
 	data = {
 		'the[0][chained][key][0][are][awesome][0][0]': 'im here !!'
 	}
-	# with "dot" separator in options is look like that
+	# With "dot" separator option:
 	data = {
 		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
 	}
-
-	# the output
-	output: {
-		'the': [
-			{
-				'chained':{
-					'key': [
-						{
-							'are': {
-								'awesome':
-								[
-									[
-										'im here !!'
-									]
-								]
-							}
-						}
-					]
-				}
-			}
-		]
-	}
 ```
+
+
+
+For this to work perfectly, you must follow the following rules:
+
+- A first key always need to be set. ex: `title[0]` or `title`. In both cases the first key is `title`
+
+- Each sub key need to be separate by brackets `[ ]` or dot `.` (depends of your options)
+
+- Don't put spaces between separators.
+
+- By default, you can't set set duplicates keys (see options)
+  
+  
 
 ## Options
 
 ```python
 {
-	# the separator
+	# Separators:
 	# with bracket:  article[title][authors][0]: "jhon doe"
 	# with dot:      article.title.authors.0: "jhon doe"
 	'separator': 'bracket' or 'dot', # default is bracket
@@ -213,7 +174,7 @@ For this working perfectly you need to follow this rules:
 	# }
 	'raise_duplicate': True, # default is True
 
-	# overide the duplicate keys, you need to set "raise_duplicate" to False
+	# override the duplicate keys, you need to set "raise_duplicate" to False
 	# ex :
 	# {
 	#	"article": 42,
@@ -230,7 +191,7 @@ For this working perfectly you need to follow this rules:
 }
 ```
 
-## Options with django rest framwork
+## Options for Django Rest Framwork:
 ```python
 
 # settings.py
@@ -244,9 +205,9 @@ DRF_NESTED_MULTIPART_PARSER = {
 }
 ```
 
-## Javscript integration
+## JavaScript integration:
 
-You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formated for this library
+You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formatted for this library
 
 ## License
 
