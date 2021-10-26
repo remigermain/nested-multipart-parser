@@ -169,6 +169,7 @@ For this to work perfectly, you must follow the following rules:
 	# Separators:
 	# with bracket:  article[title][authors][0]: "jhon doe"
 	# with dot:      article.title.authors.0: "jhon doe"
+	# with mixed:      article.title.authors[0]: "jhon doe"
 	'separator': 'bracket' or 'dot' or 'mixed', # default is bracket
 
 
