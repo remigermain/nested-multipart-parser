@@ -20,16 +20,20 @@ class NestedParser:
         self._options = options
 
         assert self._options.get("separator", "dot") in [
-            "dot", "bracket", "mixed"]
+            "dot", "bracket", "mixed", "mixed-dot"]
         assert isinstance(self._options.get("raise_duplicate", False), bool)
         assert isinstance(self._options.get("assign_duplicate", False), bool)
 
         self.__is_dot = False
         self.__is_mixed = False
         self.__is_bracket = False
+        self.__is_mixed_dot = False
         if self._options["separator"] == "dot":
             self.__is_dot = True
         elif self._options["separator"] == "mixed":
+            self.__is_mixed = True
+        elif self._options["separator"] == "mixed-dot":
+            self.__is_mixed_dot = True
             self.__is_mixed = True
         else:
             self.__is_bracket = True
@@ -54,13 +58,9 @@ class NestedParser:
         key = key[idx:]
 
         i = 0
+        last_is_list = False
         while i < len(key):
-            if key[i] == '.':
-                i += 1
-                idx = span(key, i)
-                keys.append(key[i: idx])
-                i = idx
-            elif key[i] == '[':
+            if key[i] == '[':
                 i += 1
                 idx = span(key, i)
                 if key[idx] != ']':
@@ -72,9 +72,22 @@ class NestedParser:
                         f"invalid format key '{full_keys}', list key is not a valid number at position {i + pos}")
                 keys.append(int(key[i: idx]))
                 i = idx + 1
+                last_is_list = True
             elif key[i] == ']':
                 raise ValueError(
                     f"invalid format key '{full_keys}', not start with bracket at position {i + pos}")
+            elif (key[i] == '.' and not self.__is_mixed_dot) or (
+                self.__is_mixed_dot and (
+                    (key[i] != '.' and last_is_list) or
+                    (key[i] == '.' and not last_is_list)
+                )
+            ):
+                if not self.__is_mixed_dot or not last_is_list:
+                    i += 1
+                idx = span(key, i)
+                keys.append(key[i: idx])
+                i = idx
+                last_is_list = False
             else:
                 raise ValueError(
                     f"invalid format key '{full_keys}', invalid char at position {i + pos}")
