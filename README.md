@@ -142,11 +142,11 @@ Attributes where sub keys are other than full numbers are converted into Python 
 	}
 	# with "mixed" separator option:
 	data = {
-		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
-	}
-	# with "mixed-dot" separator option (same as 'mixed' but without dot after list to object):
-	data = {
 		'the[0]chained.key[0]are.awesome[0][0]': 'im here !!'
+	}
+	# with "mixed-dot" separator option (same as 'mixed' but with dot after list to object):
+	data = {
+		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
 	}
 ```
 
@@ -158,7 +158,7 @@ For this to work perfectly, you must follow the following rules:
 
 - Each sub key need to be separate by brackets `[ ]` or dot `.` (depends of your options)
 
-- For `mixed` options, brackets `[]` is for list, and dot `.` is for object
+- For `mixed` or `mixed-dot` options, brackets `[]` is for list, and dot `.` is for object
 
 - Don't put spaces between separators.
 
@@ -173,8 +173,8 @@ For this to work perfectly, you must follow the following rules:
 	# Separators:
 	# with bracket:  article[0][title][authors][0]: "jhon doe"
 	# with dot:      article.0.title.authors.0: "jhon doe"
-	# with mixed:      article[0].title.authors[0]: "jhon doe"
-	# with mixed-dot:      article[0]title.authors[0]: "jhon doe"
+	# with mixed:      article[0]title.authors[0]: "jhon doe"
+	# with mixed-dot:      article[0].title.authors[0]: "jhon doe"
 	'separator': 'bracket' or 'dot' or 'mixed' or 'mixed-dot', # default is bracket
 
 

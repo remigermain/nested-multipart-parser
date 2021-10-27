@@ -34,7 +34,6 @@ class NestedParser:
             self.__is_mixed = True
         elif self._options["separator"] == "mixed-dot":
             self.__is_mixed_dot = True
-            self.__is_mixed = True
         else:
             self.__is_bracket = True
             self._reg = re.compile(r"\[|\]")
@@ -76,13 +75,13 @@ class NestedParser:
             elif key[i] == ']':
                 raise ValueError(
                     f"invalid format key '{full_keys}', not start with bracket at position {i + pos}")
-            elif (key[i] == '.' and not self.__is_mixed_dot) or (
-                self.__is_mixed_dot and (
+            elif (key[i] == '.' and self.__is_mixed_dot) or (
+                not self.__is_mixed_dot and (
                     (key[i] != '.' and last_is_list) or
                     (key[i] == '.' and not last_is_list)
                 )
             ):
-                if not self.__is_mixed_dot or not last_is_list:
+                if self.__is_mixed_dot or not last_is_list:
                     i += 1
                 idx = span(key, i)
                 keys.append(key[i: idx])
@@ -103,7 +102,7 @@ class NestedParser:
         # reduce + filter are a hight cost so do manualy with for loop
 
         # optimize by split with string func
-        if self.__is_mixed:
+        if self.__is_mixed or self.__is_mixed_dot:
             return self.mixed_split(key)
         if self.__is_dot:
             length = 1
@@ -146,7 +145,7 @@ class NestedParser:
         return key
 
     def get_next_type(self, key):
-        if self.__is_mixed:
+        if self.__is_mixed or self.__is_mixed_dot:
             return [] if isinstance(key, int) else {}
         return [] if key.isdigit() else {}
 

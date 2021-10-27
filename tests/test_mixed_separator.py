@@ -10,7 +10,7 @@ class TestSettingsSeparatorMixed(TestCase):
             "title[0]": 101
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed", "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [101]
@@ -23,7 +23,7 @@ class TestSettingsSeparatorMixed(TestCase):
             "title": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed", "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": 42
@@ -32,8 +32,8 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_list(self):
         data = {
-            "title[0].sub[0]": 101,
-            "title[0].sub": 42,
+            "title[0]sub[0]": 101,
+            "title[0]sub": 42,
         }
         p = NestedParser(
             data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
@@ -49,8 +49,8 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_list2(self):
         data = {
-            "title[0].sub": 42,
-            "title[0].sub[0]": 101,
+            "title[0]sub": 42,
+            "title[0]sub[0]": 101,
         }
         p = NestedParser(
             data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
@@ -66,8 +66,8 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_dict(self):
         data = {
-            "title[0].sub": 42,
-            "title[0].sub.title": 101,
+            "title[0]sub": 42,
+            "title[0]sub.title": 101,
         }
         p = NestedParser(
             data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
@@ -85,8 +85,8 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_dict2(self):
         data = {
-            "title[0].sub.title": 101,
-            "title[0].sub": 42,
+            "title[0]sub.title": 101,
+            "title[0]sub": 42,
         }
         p = NestedParser(
             data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
@@ -149,14 +149,14 @@ class TestSettingsSeparatorMixed(TestCase):
         data = {
             'title': 'title',
             'date': "time",
-            'langs[0].id': "id",
-            'langs[0].title': 'title',
-            'langs[0].description': 'description',
-            'langs[0].language': "language",
-            'langs[1].id': "id1",
-            'langs[1].title': 'title1',
-            'langs[1].description': 'description1',
-            'langs[1].language': "language1"
+            'langs[0]id': "id",
+            'langs[0]title': 'title',
+            'langs[0]description': 'description',
+            'langs[0]language': "language",
+            'langs[1]id': "id1",
+            'langs[1]title': 'title1',
+            'langs[1]description': 'description1',
+            'langs[1]language': "language1"
         }
         parser = NestedParser(data, {"separator": "mixed"})
         self.assertTrue(parser.is_valid())
@@ -247,7 +247,7 @@ class TestSettingsSeparatorMixed(TestCase):
     def test_mixed_invalid_object3(self):
         data = {
             'title': 'lalal',
-            'article.op..': 'lalal',
+            'article[0].op': 'lalal',
         }
         parser = NestedParser(data, {"separator": "mixed"})
         self.assertFalse(parser.is_valid())
@@ -255,7 +255,7 @@ class TestSettingsSeparatorMixed(TestCase):
     def test_mixed_invalid_object4(self):
         data = {
             'title': 'lalal',
-            'article[0]op': 'lalal',
+            'article.op..': 'lalal',
         }
         parser = NestedParser(data, {"separator": "mixed"})
         self.assertFalse(parser.is_valid())
