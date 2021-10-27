@@ -160,6 +160,8 @@ For this to work perfectly, you must follow the following rules:
 
 - For `mixed` or `mixed-dot` options, brackets `[]` is for list, and dot `.` is for object
 
+- For `mixed-dot` options is look like `mixed` but with dot when object follow list
+
 - Don't put spaces between separators.
 
 - By default, you can't set set duplicates keys (see options)
