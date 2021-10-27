@@ -2,7 +2,7 @@ from nested_multipart_parser import NestedParser
 from unittest import TestCase
 
 
-class TestSettingsSeparatorMixed(TestCase):
+class TestSettingsSeparatorMixedDot(TestCase):
 
     def test_assign_duplicate_list(self):
         data = {
@@ -10,7 +10,7 @@ class TestSettingsSeparatorMixed(TestCase):
             "title[0]": 101
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [101]
@@ -23,7 +23,7 @@ class TestSettingsSeparatorMixed(TestCase):
             "title": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": 42
@@ -32,11 +32,11 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_list(self):
         data = {
-            "title[0]sub[0]": 101,
-            "title[0]sub": 42,
+            "title[0].sub[0]": 101,
+            "title[0].sub": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -49,11 +49,11 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_list2(self):
         data = {
-            "title[0]sub": 42,
-            "title[0]sub[0]": 101,
+            "title[0].sub": 42,
+            "title[0].sub[0]": 101,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -66,11 +66,11 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_dict(self):
         data = {
-            "title[0]sub": 42,
-            "title[0]sub.title": 101,
+            "title[0].sub": 42,
+            "title[0].sub.title": 101,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -85,11 +85,11 @@ class TestSettingsSeparatorMixed(TestCase):
 
     def test_assign_nested_duplicate_number_after_dict2(self):
         data = {
-            "title[0]sub.title": 101,
-            "title[0]sub": 42,
+            "title[0].sub.title": 101,
+            "title[0].sub": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed"})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "mixed-dot"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -105,7 +105,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article.object': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertTrue(parser.is_valid())
         expected = {
             "title": 'lalal',
@@ -120,7 +120,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article.0': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertTrue(parser.is_valid())
         expected = {
             "title": 'lalal',
@@ -135,7 +135,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[0]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertTrue(parser.is_valid())
         expected = {
             "title": 'lalal',
@@ -149,16 +149,16 @@ class TestSettingsSeparatorMixed(TestCase):
         data = {
             'title': 'title',
             'date': "time",
-            'langs[0]id': "id",
-            'langs[0]title': 'title',
-            'langs[0]description': 'description',
-            'langs[0]language': "language",
-            'langs[1]id': "id1",
-            'langs[1]title': 'title1',
-            'langs[1]description': 'description1',
-            'langs[1]language': "language1"
+            'langs[0].id': "id",
+            'langs[0].title': 'title',
+            'langs[0].description': 'description',
+            'langs[0].language': "language",
+            'langs[1].id': "id1",
+            'langs[1].title': 'title1',
+            'langs[1].description': 'description1',
+            'langs[1].language': "language1"
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': 'title',
@@ -185,7 +185,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[0f]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_empty_index(self):
@@ -193,7 +193,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_bracket(self):
@@ -201,7 +201,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_bracket2(self):
@@ -209,7 +209,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_dot(self):
@@ -217,7 +217,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[3.]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_negative_index(self):
@@ -225,7 +225,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[-3]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_object(self):
@@ -233,7 +233,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article..op': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_object2(self):
@@ -241,23 +241,23 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article.op.': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_object3(self):
         data = {
             'title': 'lalal',
-            'article[0].op': 'lalal',
+            'article.op..': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_object4(self):
         data = {
             'title': 'lalal',
-            'article.op..': 'lalal',
+            'article[0]op': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_with_object_dot(self):
@@ -265,7 +265,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[0].op..': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_with_object_dot2(self):
@@ -273,7 +273,7 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article[0]op[0]e.': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
 
     def test_mixed_invalid_list_with_object_dot3(self):
@@ -281,5 +281,5 @@ class TestSettingsSeparatorMixed(TestCase):
             'title': 'lalal',
             'article.op.[0]': 'lalal',
         }
-        parser = NestedParser(data, {"separator": "mixed"})
+        parser = NestedParser(data, {"separator": "mixed-dot"})
         self.assertFalse(parser.is_valid())
