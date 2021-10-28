@@ -11,7 +11,7 @@ class NestedParser:
 
     def _merge_options(self, options):
         DEFAULT_OPTIONS = {
-            "separator": "bracket",
+            "separator": "mixed-dot",
             "raise_duplicate": True,
             "assign_duplicate": False
         }
@@ -19,7 +19,7 @@ class NestedParser:
         options = {**DEFAULT_OPTIONS, **options}
         self._options = options
 
-        assert self._options.get("separator", "dot") in [
+        assert self._options.get("separator", "mixed-dot") in [
             "dot", "bracket", "mixed", "mixed-dot"]
         assert isinstance(self._options.get("raise_duplicate", False), bool)
         assert isinstance(self._options.get("assign_duplicate", False), bool)

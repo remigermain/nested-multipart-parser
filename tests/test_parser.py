@@ -24,7 +24,7 @@ class TestParser(TestCase):
         data = {
             'title[id][length]': 'lalal'
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': {
@@ -40,7 +40,7 @@ class TestParser(TestCase):
             'title[id][length]': 'lalal',
             'title[id][value]': 'lalal'
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': {
@@ -59,7 +59,7 @@ class TestParser(TestCase):
             'title[id][value]': 'lalal',
             'title[value]': 'lalal'
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': {
@@ -81,7 +81,7 @@ class TestParser(TestCase):
             'sub': 'lalal',
             'title[id][recusrive][only][field]': 'icci'
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': {
@@ -107,7 +107,7 @@ class TestParser(TestCase):
             'sub': 'lalal',
             'title[id][recusrive][only][field]': 'icci',
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': {
@@ -189,7 +189,7 @@ class TestParser(TestCase):
             'title': 'lalal',
             'list[length][0]': 'icicici'
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         expected = {
             'title': 'lalal',
             'list': {
@@ -214,7 +214,7 @@ class TestParser(TestCase):
             'langs[1][description]': 'description1',
             'langs[1][language]': "language1"
         }
-        parser = NestedParser(data)
+        parser = NestedParser(data, {"separator": "bracket"})
         self.assertTrue(parser.is_valid())
         expected = {
             'title': 'title',

@@ -53,16 +53,16 @@ example:
 {
 	'title': 'title',
 	'date': "time",
-	'simple_object[my_key]': 'title'
-	'simple_object[my_list][0]': True,
-	'langs[0][id]': 666,
-	'langs[0][title]': 'title',
-	'langs[0][description]': 'description',
-	'langs[0][language]': "language",
-	'langs[1][id]': 4566,
-	'langs[1][title]': 'title1',
-	'langs[1][description]': 'description1',
-	'langs[1][language]': "language1"
+	'simple_object.my_key': 'title'
+	'simple_object.my_list[0]': True,
+	'langs[0].id': 666,
+	'langs[0].title': 'title',
+	'langs[0].description': 'description',
+	'langs[0].language': "language",
+	'langs[1].id': 4566,
+	'langs[1].title': 'title1',
+	'langs[1].description': 'description1',
+	'langs[1].language': "language1"
 }
 
 # result:
@@ -122,8 +122,8 @@ Attributes where sub keys are other than full numbers are converted into Python 
 
 ```python
 	data = {
-		'title[key0]': 'my-value',
-		'title[key7]': 'my-second-value'
+		'title.key0': 'my-value',
+		'title.key7': 'my-second-value'
 	}
 	output = {
 		'title': {
@@ -132,21 +132,23 @@ Attributes where sub keys are other than full numbers are converted into Python 
 		}
 	}
     
+
     # You have no limit for chained key:
+	# with "mixed-dot" separator option (same as 'mixed' but with dot after list to object):
+	data = {
+		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
+	}
+	# with "mixed" separator option:
+	data = {
+		'the[0]chained.key[0]are.awesome[0][0]': 'im here !!'
+	}
+	# With "bracket" separator option:
 	data = {
 		'the[0][chained][key][0][are][awesome][0][0]': 'im here !!'
 	}
 	# With "dot" separator option:
 	data = {
 		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
-	}
-	# with "mixed" separator option:
-	data = {
-		'the[0]chained.key[0]are.awesome[0][0]': 'im here !!'
-	}
-	# with "mixed-dot" separator option (same as 'mixed' but with dot after list to object):
-	data = {
-		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
 	}
 ```
 
@@ -156,11 +158,13 @@ For this to work perfectly, you must follow the following rules:
 
 - A first key always need to be set. ex: `title[0]` or `title`. In both cases the first key is `title`
 
-- Each sub key need to be separate by brackets `[ ]` or dot `.` (depends of your options)
-
 - For `mixed` or `mixed-dot` options, brackets `[]` is for list, and dot `.` is for object
 
 - For `mixed-dot` options is look like `mixed` but with dot when object follow list
+
+- For `bracket` each sub key need to be separate by brackets `[ ]` or with `dot` options `.`
+
+- For `bracket` or `dot`options, if a key is number is convert to list else a object
 
 - Don't put spaces between separators.
 
@@ -173,11 +177,11 @@ For this to work perfectly, you must follow the following rules:
 ```python
 {
 	# Separators:
+	# with mixed-dot:      article[0].title.authors[0]: "jhon doe"
+	# with mixed:      article[0]title.authors[0]: "jhon doe"
 	# with bracket:  article[0][title][authors][0]: "jhon doe"
 	# with dot:      article.0.title.authors.0: "jhon doe"
-	# with mixed:      article[0]title.authors[0]: "jhon doe"
-	# with mixed-dot:      article[0].title.authors[0]: "jhon doe"
-	'separator': 'bracket' or 'dot' or 'mixed' or 'mixed-dot', # default is bracket
+	'separator': 'bracket' or 'dot' or 'mixed' or 'mixed-dot', # default is `mixed-dot`
 
 
 	# raise a expections when you have duplicate keys
@@ -212,7 +216,7 @@ For this to work perfectly, you must follow the following rules:
 ...
 
 DRF_NESTED_MULTIPART_PARSER = {
-	"separator": "bracket",
+	"separator": "mixed-dot",
 	"raise_duplicate": True,
 	"assign_duplicate": False
 

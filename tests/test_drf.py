@@ -24,14 +24,14 @@ class TestDrfParser(unittest.TestCase):
     def test_querydict_mutable(self):
         parser = NestedParser(
             {
-                "dtc[key]": 'value',
-                "dtc[vla]": "value2",
+                "dtc.key": 'value',
+                "dtc.vla": "value2",
                 "list[0]": "value1",
                 "list[1]": "value2",
                 "string": "value",
-                "dtc[hh][oo]": "sub",
-                "dtc[hh][aa]": "sub2"
-            }
+                "dtc.hh.oo": "sub",
+                "dtc.hh.aa": "sub2"
+            },
         )
         self.assertTrue(parser.is_valid())
         expected = toQueryDict({
@@ -61,7 +61,9 @@ class TestDrfParser(unittest.TestCase):
         p = NestedParser(data)
         self.assertTrue(p.is_valid())
         expected = toQueryDict({
-            "article.title": "youpi"
+            "article": {
+                "title": "youpi"
+            }
         })
         self.assertEqual(p.validate_data, expected)
 

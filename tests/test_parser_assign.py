@@ -10,7 +10,7 @@ class TestSettingsSeparator(TestCase):
             "title[0]": 101
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [101]
@@ -23,7 +23,7 @@ class TestSettingsSeparator(TestCase):
             "title": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": 42
@@ -36,7 +36,7 @@ class TestSettingsSeparator(TestCase):
             "title[0][sub]": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -53,7 +53,7 @@ class TestSettingsSeparator(TestCase):
             "title[0][sub][0]": 101,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -70,7 +70,7 @@ class TestSettingsSeparator(TestCase):
             "title[0][sub][title]": 101,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
@@ -89,7 +89,7 @@ class TestSettingsSeparator(TestCase):
             "title[0][sub]": 42,
         }
         p = NestedParser(
-            data, {"raise_duplicate": False, "assign_duplicate": True})
+            data, {"raise_duplicate": False, "assign_duplicate": True, "separator": "bracket"})
         self.assertTrue(p.is_valid())
         expected = {
             "title": [
