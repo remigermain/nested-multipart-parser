@@ -10,7 +10,7 @@ from django.test.client import encode_multipart  # noqa: E402
 from nested_multipart_parser.drf import DrfNestedParser, NestedParser  # noqa: E402
 from rest_framework.request import Request  # noqa: E402
 from rest_framework.exceptions import ParseError  # noqa: E402
-
+from django.core.files.uploadedfile import SimpleUploadedFile, InMemoryUploadedFile
 
 def toQueryDict(data):
     q = QueryDict(mutable=True)
@@ -212,3 +212,48 @@ class TestDrfParser(unittest.TestCase):
         }
 
         self.assertEqual(results.data, toQueryDict(expected))
+
+    def test_nested_files(self):
+        file =  SimpleUploadedFile("file.png", b"file_content", content_type="image/png")
+        file1 = SimpleUploadedFile("file.pdf", b"file_content", content_type="application/pdf")
+
+        data = {
+            "file": file,
+            "title": "title",
+            'files[0].description': 'description',
+            'files[1].file': file1,
+            'files[1].description': 'description2',
+        }
+        results = self.parser_boundary(data)
+
+        # files is not in
+        expected = {
+            "file": file,
+            "title": "title",
+            "files": [
+                {
+                    "description": "description",
+                },
+                {
+                    "file": file1,
+                    "description": "description2",
+                }
+            ],
+        }
+        data = results.data.dict()
+        self.assertEqual(len(data), 3)
+
+        self.assertIsInstance(data["file"], InMemoryUploadedFile)
+        self.assertEqual(data["title"], expected["title"])
+
+        self.assertEqual(len(data["files"]), 2)
+        self.assertIsInstance(data["files"], list)
+
+        self.assertIsInstance(data["files"][0], dict)
+        self.assertEqual(len(data["files"][0]), 1)
+        self.assertEqual(data["files"][0]["description"], "description")
+
+        self.assertIsInstance(data["files"][1], dict)
+        self.assertEqual(len(data["files"][1]), 2)
+        self.assertEqual(data["files"][1]["description"], "description2")
+        self.assertIsInstance(data["files"][1]["file"], InMemoryUploadedFile)

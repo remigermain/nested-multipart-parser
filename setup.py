@@ -5,10 +5,7 @@ import os
 import sys
 import subprocess
 
-
-# tags = subprocess.check_output("git tag -l | cat", shell=True).decode("utf-8")
-# version = list(filter(None, tags.split("\n")))[-1]
-version = "v1.3.1"
+version = "1.4.0"
 
 if sys.argv[-1] == 'publish':
     if os.system("pip freeze | grep twine"):

@@ -30,7 +30,10 @@ class DrfNestedParser(MultiPartParser):
     def parse(self, stream, media_type=None, parser_context=None):
         clsDataAndFile = super().parse(stream, media_type, parser_context)
 
-        parser = NestedParser(clsDataAndFile.data.dict())
+        data = clsDataAndFile.data.dict()
+        data.update(clsDataAndFile.files.dict()) # add files to data
+
+        parser = NestedParser(data)
         if parser.is_valid():
-            return DataAndFiles(parser.validate_data, clsDataAndFile.files)
+            return parser.validate_data
         raise ParseError(parser.errors)
