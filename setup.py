@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-version = "1.4.0"
+version = "1.4.1"
 
 if sys.argv[-1] == 'publish':
     if os.system("pip freeze | grep twine"):

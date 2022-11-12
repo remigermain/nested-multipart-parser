@@ -1,5 +1,9 @@
 import re
-
+DEFAULT_OPTIONS = {
+    "separator": "mixed-dot",
+    "raise_duplicate": True,
+    "assign_duplicate": False
+}
 
 class NestedParser:
     _valid = None
@@ -10,12 +14,6 @@ class NestedParser:
         self._merge_options(options)
 
     def _merge_options(self, options):
-        DEFAULT_OPTIONS = {
-            "separator": "mixed-dot",
-            "raise_duplicate": True,
-            "assign_duplicate": False
-        }
-
         options = {**DEFAULT_OPTIONS, **options}
         self._options = options
 

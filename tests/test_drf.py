@@ -20,6 +20,9 @@ def toQueryDict(data):
 
 
 class TestDrfParser(unittest.TestCase):
+    def setUp(self):
+        # reset settings
+        setattr(settings, "DRF_NESTED_MULTIPART_PARSER", {})
 
     def test_querydict_mutable(self):
         parser = NestedParser(
@@ -212,6 +215,29 @@ class TestDrfParser(unittest.TestCase):
         }
 
         self.assertEqual(results.data, toQueryDict(expected))
+    
+    def test_output_querydict(self):
+        setattr(settings, 'DRF_NESTED_MULTIPART_PARSER',
+                {"separator": "mixed", "querydict": False})
+        data = {
+            "dtc.key": 'value',
+            "dtc.hh.oo": "sub",
+            "dtc.hh.aa": "sub2"
+        }
+        results = self.parser_boundary(data)
+
+        expected = {
+            "dtc": {
+                "key": "value",
+                "hh": {
+                    "aa": "sub2",
+                    "oo": "sub"
+                }
+            }
+        }
+
+        self.assertDictEqual(results.data, expected)
+
 
     def test_nested_files(self):
         file =  SimpleUploadedFile("file.png", b"file_content", content_type="image/png")

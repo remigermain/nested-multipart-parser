@@ -218,8 +218,11 @@ For this to work perfectly, you must follow the following rules:
 DRF_NESTED_MULTIPART_PARSER = {
 	"separator": "mixed-dot",
 	"raise_duplicate": True,
-	"assign_duplicate": False
+	"assign_duplicate": False,
 
+	# output of parser is converted to querydict 
+	# if is set to False, dict python is returned
+	"querydict": True,
 }
 ```
 
