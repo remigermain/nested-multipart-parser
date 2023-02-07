@@ -169,6 +169,12 @@ For this to work perfectly, you must follow the following rules:
 - Don't put spaces between separators.
 
 - By default, you can't set set duplicates keys (see options)
+
+- You can set empty dict/list:
+	for empty list: `"article.authors[]": None` -> `{"article": {"authors": [] }}`
+	for empty dict: `"article.": None` -> `{"article": {} }`
+	`.` last dot for empty dict (availables in `dot`, `mixed` and `mixed-dot` options)
+	`[]` brackets empty for empty list (availables in `brackets`, `mixed` and `mixed-dot` options)
   
   
 
