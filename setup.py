@@ -5,7 +5,7 @@ import os
 import sys
 import subprocess
 
-version = "1.4.1"
+version = "1.5.0"
 
 if sys.argv[-1] == 'publish':
     if os.system("pip freeze | grep twine"):
@@ -28,8 +28,8 @@ setuptools.setup(
     name="nested-multipart-parser",
     version=version,
     author="rgermain",
-    license='MIT',
-    author_email='contact@germainremi.fr',
+    license="MIT",
+    author_email="contact@germainremi.fr",
     description="A parser for nested data in multipart form",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -38,23 +38,23 @@ setuptools.setup(
         "Bug Tracker": "https://github.com/remigermain/nested-multipart-parser/issues",
     },
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Framework :: Django',
-        'Framework :: Django :: 2.2',
-        'Framework :: Django :: 3.0',
-        'Framework :: Django :: 3.1',
-        'Framework :: Django :: 3.2',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3 :: Only',
-        'Topic :: Internet :: WWW/HTTP',
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Web Environment",
+        "Framework :: Django",
+        "Framework :: Django :: 2.2",
+        "Framework :: Django :: 3.0",
+        "Framework :: Django :: 3.1",
+        "Framework :: Django :: 3.2",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: BSD License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3 :: Only",
+        "Topic :: Internet :: WWW/HTTP",
     ],
     packages=["nested_multipart_parser"],
     python_requires=">=3.6",
