@@ -1,3 +1,6 @@
 -r common.txt
 Django
 djangorestframework
+
+pytest
+pytest-cov
