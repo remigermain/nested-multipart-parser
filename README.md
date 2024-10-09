@@ -1,5 +1,6 @@
 # Nested-multipart-parser
 
+[![CI](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml/badge.svg)](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml)
 [![pypi](https://img.shields.io/pypi/v/nested-multipart-parser)](https://pypi.org/project/nested-multipart-parser/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/Nested-multipart-parser)
 
