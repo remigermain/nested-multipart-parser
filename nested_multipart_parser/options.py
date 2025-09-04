@@ -1,4 +1,4 @@
-import re
+from nested_multipart_parser.lazy import lazy_regex_compile
 
 
 class InvalidFormat(Exception):
@@ -16,7 +16,7 @@ class NestedParserOptionsType(type):
         return super().__new__(cls, cls_name, ns, childs)
 
 
-TOKEN_PARSER = ("[", "]", ".")
+INVALID_TOKEN_PARSER = ("[", "]", ".")
 
 
 class NestedParserOptionsAbstract(metaclass=NestedParserOptionsType):
@@ -25,7 +25,7 @@ class NestedParserOptionsAbstract(metaclass=NestedParserOptionsType):
             raise InvalidFormat(key)
 
         first = keys[0]
-        for token in TOKEN_PARSER:
+        for token in INVALID_TOKEN_PARSER:
             if token in first:
                 raise InvalidFormat(key)
 
@@ -35,7 +35,7 @@ class NestedParserOptionsAbstract(metaclass=NestedParserOptionsType):
             for c in key:
                 if c.isspace():
                     raise InvalidFormat(key)
-    
+
     def split(self, key):
         contents = list(filter(None, self._reg_spliter.split(key)))
         if not contents:
@@ -50,18 +50,10 @@ class NestedParserOptionsAbstract(metaclass=NestedParserOptionsType):
         return list(filter(None, lst))
 
 
-REGEX_SEPARATOR = {
-    "dot": r"(\.[^\.]+)",
-    "bracket": r"([^\[\]]+)",
-    "mixed": r"(\[\d+\])|([^\[\]]+)",
-    "mixed-dot": r"(\[\d+\])|(\.[^\[\]\.]+)",
-}
-
-
 class NestedParserOptionsDot(NestedParserOptionsAbstract):
     def __init__(self):
-        self._reg_spliter = re.compile(r"^([^\.]+)(.*?)(\.)?$")
-        self._reg_options = re.compile(r"(\.[^\.]+)")
+        self._reg_spliter = lazy_regex_compile(r"^([^\.]+)(.*?)(\.)?$")
+        self._reg_options = lazy_regex_compile(r"(\.[^\.]+)")
 
     def sanitize(self, key, value):
         contents = self.split(key)
@@ -88,8 +80,8 @@ class NestedParserOptionsDot(NestedParserOptionsAbstract):
 
 class NestedParserOptionsBracket(NestedParserOptionsAbstract):
     def __init__(self):
-        self._reg_spliter = re.compile(r"^([^\[\]]+)(.*?)(\[\])?$")
-        self._reg_options = re.compile(r"(\[[^\[\]]+\])")
+        self._reg_spliter = lazy_regex_compile(r"^([^\[\]]+)(.*?)(\[\])?$")
+        self._reg_options = lazy_regex_compile(r"(\[[^\[\]]+\])")
 
     def sanitize(self, key, value):
         first, *lst = self.split(key)
@@ -117,8 +109,10 @@ class NestedParserOptionsBracket(NestedParserOptionsAbstract):
 
 class NestedParserOptionsMixedDot(NestedParserOptionsAbstract):
     def __init__(self):
-        self._reg_spliter = re.compile(r"^([^\[\]\.]+)(.*?)((?:\.)|(?:\[\]))?$")
-        self._reg_options = re.compile(r"(\[\d+\])|(\.[^\[\]\.]+)")
+        self._reg_spliter = lazy_regex_compile(
+            r"^([^\[\]\.]+)(.*?)((?:\.)|(?:\[\]))?$"
+        )
+        self._reg_options = lazy_regex_compile(r"(\[\d+\])|(\.[^\[\]\.]+)")
 
     def sanitize(self, key, value):
         first, *lst = self.split(key)
@@ -152,8 +146,10 @@ class NestedParserOptionsMixedDot(NestedParserOptionsAbstract):
 
 class NestedParserOptionsMixed(NestedParserOptionsMixedDot):
     def __init__(self):
-        self._reg_spliter = re.compile(r"^([^\[\]\.]+)(.*?)((?:\.)|(?:\[\]))?$")
-        self._reg_options = re.compile(r"(\[\d+\])|(\.?[^\[\]\.]+)")
+        self._reg_spliter = lazy_regex_compile(
+            r"^([^\[\]\.]+)(.*?)((?:\.)|(?:\[\]))?$"
+        )
+        self._reg_options = lazy_regex_compile(r"(\[\d+\])|(\.?[^\[\]\.]+)")
 
     def sanitize(self, key, value):
         first, *lst = self.split(key)

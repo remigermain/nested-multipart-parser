@@ -24,9 +24,9 @@ class NestedParser:
     _valid = None
     errors = None
 
-    def __init__(self, data, options={}):
+    def __init__(self, data, options=None):
         self.data = data
-        self._options = {**DEFAULT_OPTIONS, **options}
+        self._options = {**DEFAULT_OPTIONS, **(options or {})}
 
         assert self._options["separator"] in [
             "dot",
@@ -40,8 +40,8 @@ class NestedParser:
         self._cls_options = REGEX_SEPARATOR[self._options["separator"]]
 
     def _split_keys(self, data):
+        checker = self._cls_options()
         for key, value in data.items():
-            checker = self._cls_options()
             keys, value = checker.sanitize(key, value)
             checker.check(key, keys)
 
