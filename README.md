@@ -3,10 +3,9 @@
 <a href="https://u8views.com/github/remigermain"><img src="https://u8views.com/api/v1/github/profiles/66946113/views/day-week-month-total-count.svg" width="1px" height="1px"></a>
 [![CI](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml/badge.svg)](https://github.com/remigermain/nested-multipart-parser/actions/workflows/main.yml)
 [![pypi](https://img.shields.io/pypi/v/nested-multipart-parser)](https://pypi.org/project/nested-multipart-parser/)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/Nested-multipart-parser)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/Nested-multipart-parser)](https://pypistats.org/packages/nested-multipart-parser)
 
-Parser for nested data for '*multipart/form*', you can use it in any python project, or use the Django Rest Framework integration.
-
+Parser for nested data for *multipart/form*, usable in any Python project or via the [Django Rest Framework integration](https://www.django-rest-framework.org/community/third-party-packages/#parsers)..
 # Installation:
 
 ```bash
@@ -35,6 +34,16 @@ def my_view():
 
 ### Django Rest Framework
 
+you can define parser for all view in settings.py
+```python
+REST_FRAMEWORK = {
+	"DEFAULT_PARSER_CLASSES": [
+		"nested_multipart_parser.drf.DrfNestedParser",
+	]
+}
+```
+or directly in your view
+
 ```python
 from nested_multipart_parser.drf import DrfNestedParser
 ...
@@ -46,7 +55,7 @@ class YourViewSet(viewsets.ViewSet):
 
 ## What it does:
 
-The parser take the request data and transform it to a Python dictionary:
+The parser takes the request data and transforms it into a Python dictionary.
 
 example:
 
@@ -94,126 +103,106 @@ example:
 }
 ```
 
-## How it works:
+## How it works
+### Lists
 
-Attributes where sub keys are full numbers only are automatically converted into lists:
-
+Attributes whose sub‑keys are *only numbers* become Python lists:
 ```python
-	data = {
-		'title[0]': 'my-value',
-		'title[1]': 'my-second-value'
-	}
-	output = {
-		'title': [
-			'my-value',
-			'my-second-value'
-		]
-	}
+data = {
+    'title[0]': 'my-value',
+    'title[1]': 'my-second-value'
+}
+output = {
+    'title': [
+        'my-value',
+        'my-second-value'
+    ]
+}
+```
+> Important notes
 
-	# Be aware of the fact that you have to respect the order of the indices for arrays, thus 
-    	'title[2]': 'my-value' # Invalid (you have to set title[0] and title[1] before)
-
-    # Also, you can't create an array on a key already set as a prinitive value (int, boolean or string):
-		'title': 42,
-		'title[object]': 42 # Invalid
+- Indices must be contiguous and start at 0.
+- You cannot turn a primitive (int, bool, str) into a list later, e.g.
+```python
+    'title': 42,
+    'title[object]': 42   # ❌ invalid
 ```
 
+### Dictionaries
 
-
-Attributes where sub keys are other than full numbers are converted into Python dictionary:
-
+Attributes whose sub‑keys are *not pure numbers* become nested dictionaries:
 ```python
-	data = {
-		'title.key0': 'my-value',
-		'title.key7': 'my-second-value'
-	}
-	output = {
-		'title': {
-			'key0': 'my-value',
-			'key7': 'my-second-value'
-		}
-	}
-    
-
-    # You have no limit for chained key:
-	# with "mixed-dot" separator option (same as 'mixed' but with dot after list to object):
-	data = {
-		'the[0].chained.key[0].are.awesome[0][0]': 'im here !!'
-	}
-	# with "mixed" separator option:
-	data = {
-		'the[0]chained.key[0]are.awesome[0][0]': 'im here !!'
-	}
-	# With "bracket" separator option:
-	data = {
-		'the[0][chained][key][0][are][awesome][0][0]': 'im here !!'
-	}
-	# With "dot" separator option:
-	data = {
-		'the.0.chained.key.0.are.awesome.0.0': 'im here !!'
-	}
+data = {
+    'title.key0': 'my-value',
+    'title.key7': 'my-second-value'
+}
+output = {
+    'title': {
+        'key0': 'my-value',
+        'key7': 'my-second-value'
+    }
+}
 ```
 
+### Chaining keys
+
+>Keys can be chained arbitrarily. Below are examples for each separator option:
+
+|Separator|	Example key |	Meaning|
+|-|-|-|
+|mixed‑dot|	the[0].chained.key[0].are.awesome[0][0]	|List → object → list → object …|
+|mixed|	the[0]chained.key[0]are.awesome[0][0] |	Same as mixed‑dot but without the dot after a list|
+|bracket|	the[0][chained][key][0][are][awesome][0][0]	| Every sub‑key is wrapped in brackets|
+|dot	|the.0.chained.key.0.are.awesome.0.0 |	Dots separate every level; numeric parts become lists|
 
 
-For this to work perfectly, you must follow the following rules:
+Rules to keep in mind
+- First key must exist – e.g. title[0] or just title.
+- For mixed / mixed‑dot, [] denotes a list and . denotes an object.
+- mixed‑dot behaves like mixed but inserts a dot when an object follows a list.
+- For bracket, each sub‑key must be surrounded by brackets ([ ]).
+- For bracket or dot, numeric sub‑keys become list elements; non‑numeric become objects.
+- No spaces between separators.
+- By default, duplicate keys are disallowed (see options).
+- Empty structures are supported:
+        Empty list → "article.authors[]": None → {"article": {"authors": []}}
+        Empty dict → "article.": None → {"article": {}} (available with dot, mixed, mixed‑dot)
 
-- A first key always need to be set. ex: `title[0]` or `title`. In both cases the first key is `title`
 
-- For `mixed` or `mixed-dot` options, brackets `[]` is for list, and dot `.` is for object
-
-- For `mixed-dot` options is look like `mixed` but with dot when object follow list
-
-- For `bracket` each sub key need to be separate by brackets `[ ]` or with `dot` options `.`
-
-- For `bracket` or `dot`options, if a key is number is convert to list else a object
-
-- Don't put spaces between separators.
-
-- By default, you can't set set duplicates keys (see options)
-
-- You can set empty dict/list:
-	for empty list: `"article.authors[]": None` -> `{"article": {"authors": [] }}`
-	for empty dict: `"article.": None` -> `{"article": {} }`
-	`.` last dot for empty dict (availables in `dot`, `mixed` and `mixed-dot` options)
-	`[]` brackets empty for empty list (availables in `brackets`, `mixed` and `mixed-dot` options)
-  
   
 
 ## Options
 
 ```python
 {
-	# Separators:
-	# with mixed-dot:      article[0].title.authors[0]: "jhon doe"
-	# with mixed:      article[0]title.authors[0]: "jhon doe"
-	# with bracket:  article[0][title][authors][0]: "jhon doe"
-	# with dot:      article.0.title.authors.0: "jhon doe"
-	'separator': 'bracket' or 'dot' or 'mixed' or 'mixed-dot', # default is `mixed-dot`
+    # Separator (default: 'mixed‑dot')
+    #   mixed‑dot : article[0].title.authors[0] -> "john doe"
+    #   mixed    : article[0]title.authors[0]   -> "john doe"
+    #   bracket  : article[0][title][authors][0] -> "john doe"
+    #   dot      : article.0.title.authors.0   -> "john doe"
+    'separator': 'bracket' | 'dot' | 'mixed' | 'mixed‑dot',
 
+    # Raise an exception when duplicate keys are encountered
+    #   Example:
+    #   {
+    #       "article": 42,
+    #       "article[title]": 42,
+    #   }
+    'raise_duplicate': True,   # default: True
 
-	# raise a expections when you have duplicate keys
-	# ex :
-	# {
-	#	"article": 42,
-	#	"article[title]": 42,
-	# }
-	'raise_duplicate': True, # default is True
-
-	# override the duplicate keys, you need to set "raise_duplicate" to False
-	# ex :
-	# {
-	#	"article": 42,
-	#	"article[title]": 42,
-	# }
-	# the out is
-	# ex :
-	# {
-	#	"article"{
-	# 		"title": 42,
-	#	}
-	# }
-	'assign_duplicate': False # default is False
+    # Override duplicate keys (requires raise_duplicate=False)
+    #   Example:
+    #   {
+    #       "article": 42,
+    #       "article[title]": 42,
+    #   }
+    #   Result:
+    #   {
+    #       "article": {
+    #           "title": 42
+    #       }
+    #   }
+    'assign_duplicate': False, # default: False
 }
 ```
 
@@ -223,20 +212,20 @@ For this to work perfectly, you must follow the following rules:
 # settings.py
 ...
 
+# settings.py
 DRF_NESTED_MULTIPART_PARSER = {
-	"separator": "mixed-dot",
-	"raise_duplicate": True,
-	"assign_duplicate": False,
+    "separator": "mixed‑dot",
+    "raise_duplicate": True,
+    "assign_duplicate": False,
 
-	# output of parser is converted to querydict 
-	# if is set to False, dict python is returned
-	"querydict": True,
+    # If True, the parser’s output is converted to a QueryDict;
+    # if False, a plain Python dict is returned.
+    "querydict": True,
 }
 ```
 
 ## JavaScript integration:
-
-You can use this [multipart-object](https://github.com/remigermain/multipart-object) library to easy convert object to flat nested object formatted for this library
+A companion [multipart-object](https://github.com/remigermain/multipart-object) library exists to convert a JavaScript object into the flat, nested format expected by this parser.
 
 ## License
 
