@@ -1,11 +1,10 @@
-from nested_multipart_parser.declare import NestedDeclare
 from nested_multipart_parser.options import (
-    NestedParserOptionsMixedDot,
-    NestedParserOptionsMixed,
     NestedParserOptionsBracket,
     NestedParserOptionsDot,
+    NestedParserOptionsMixed,
+    NestedParserOptionsMixedDot,
 )
-
+from nested_multipart_parser.temp_element import TempDict, TempList
 
 DEFAULT_OPTIONS = {
     "separator": "mixed-dot",
@@ -29,7 +28,12 @@ class NestedParser:
         self.data = data
         self._options = {**DEFAULT_OPTIONS, **options}
 
-        assert self._options["separator"] in ["dot", "bracket", "mixed", "mixed-dot"]
+        assert self._options["separator"] in [
+            "dot",
+            "bracket",
+            "mixed",
+            "mixed-dot",
+        ]
         assert isinstance(self._options["raise_duplicate"], bool)
         assert isinstance(self._options["assign_duplicate"], bool)
 
@@ -47,16 +51,16 @@ class NestedParser:
         return value
 
     def construct(self, data):
-        dictionary = NestedDeclare(dict, self._options)
+        dictionary = TempDict(self._options)
 
         for keys, value in self._split_keys(data):
             tmp = dictionary
 
             for actual_key, next_key in zip(keys, keys[1:]):
                 if isinstance(next_key, int):
-                    tmp[actual_key] = NestedDeclare(list, self._options)
+                    tmp[actual_key] = TempList(self._options)
                 else:
-                    tmp[actual_key] = NestedDeclare(dict, self._options)
+                    tmp[actual_key] = TempDict(self._options)
                 tmp = tmp[actual_key]
 
             tmp[keys[-1]] = self.convert_value(value)
