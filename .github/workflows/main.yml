@@ -8,7 +8,8 @@ on:
 jobs:
   build:
     name: Python ${{ matrix.python-version }}
-    runs-on: ubuntu-20.04
+    # https://stackoverflow.com/questions/70959954/error-waiting-for-a-runner-to-pick-up-this-job-using-github-actions
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
