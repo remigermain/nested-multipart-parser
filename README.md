@@ -208,10 +208,6 @@ Rules to keep in mind
 
 ## Options for Django Rest Framwork:
 ```python
-
-# settings.py
-...
-
 # settings.py
 DRF_NESTED_MULTIPART_PARSER = {
     "separator": "mixed‑dot",
