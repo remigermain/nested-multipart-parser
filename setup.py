@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 
-import setuptools
 import os
-import sys
 import subprocess
+import sys
 
-version = "1.5.0"
+import setuptools
 
-if sys.argv[-1] == 'publish':
+version = "1.6.0"
+
+if sys.argv[-1] == "publish":
     if os.system("pip freeze | grep twine"):
         print("twine not installed.\nUse `pip install twine`.\nExiting.")
         sys.exit()
-    os.system('rm -rf dist nested_multipart_parser.egg-info')
+    os.system("rm -rf dist nested_multipart_parser.egg-info")
     os.system("python setup.py sdist")
     if os.system("twine check dist/*"):
         print("twine check failed. Packages might be outdated.")
@@ -21,7 +22,7 @@ if sys.argv[-1] == 'publish':
     sys.exit()
 
 
-with open("README.md", "r", encoding="utf-8") as fh:
+with open("README.md", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
@@ -35,7 +36,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/remigermain/nested-multipart-parser",
     project_urls={
-        "Bug Tracker": "https://github.com/remigermain/nested-multipart-parser/issues",
+        "Bug Tracker": "https://github.com/remigermain/nested-multipart-parser/issues"
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
